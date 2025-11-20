@@ -399,6 +399,9 @@ class PipInstaller:
 
 # region  Ask
 # region > BaseAsk
+
+# The purpose of this base class is to have a uniform base class for all four ASK classes
+# To facilitate follow-up to do type judgments
 class BaseAsk(ABC):
     """
     Interface for asking questions
