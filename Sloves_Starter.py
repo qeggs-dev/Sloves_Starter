@@ -1320,14 +1320,16 @@ class SlovesStarter:
 
 # region Start
 if __name__ == "__main__":
+    text_encoding = "utf-8"
     try:
         starter = SlovesStarter()
+        text_coding = starter.text_encoding
         starter.main()
     except KeyboardInterrupt:
         print("Program terminated by user.")
         exit(ExitCode.USER_TERMINATED)
     except Exception as e:
-        with open("Traceback.txt", "w") as f:
+        with open("Traceback.txt", "w", text_encoding) as f:
             f.write(traceback.format_exc())
         traceback.print_exc()
         SlovesStarter.pause_program(ExitCode.UNKNOWN_ERROR)
