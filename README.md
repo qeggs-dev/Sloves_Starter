@@ -10,6 +10,7 @@ Sloves Starter is a single-file Python script launcher that handles virtual envi
 The goal is to not take up space in the project and to ensure that all Python packages are for the main project.
 
 ```bash
+# Just This Command
 python Sloves_Starter.py
 ```
 
@@ -32,11 +33,11 @@ python Sloves_Starter.py
 
 ```json
 {
-    "title": "Sloves Python Script Starter",
-    "console_title": "Sloves Python Script Starter",
-    "process_title": "Python Script",
-    "process_exit_title": "Sloves Python Script Starter",
-    "exit_title": "Sloves Python Script Starter",
+    "title": "Sloves Python Script Starter", // Title of the console window
+    "console_title": "Sloves Python Script Starter", // Center text caption for the console
+    "process_title": "Python Script", // The title to display when entering the program
+    "process_exit_title": "Sloves Python Script Starter", // The title to display after exiting the program
+    "exit_title": "Sloves Python Script Starter", // The title to display after exiting the launcher
     "python_name": {
         "windows": "python",
         "linux": "python3",
@@ -61,26 +62,32 @@ python Sloves_Starter.py
         }
     ],
     "requirements_file": "requirements.txt",
-    "cwd": "D:\\Projects\\Python\\Sloves_Starter",
-    "work_directory": "D:\\Projects\\Python\\Sloves_Starter",
-    "use_venv": true,
+    "cwd": "D:\\Projects\\Python\\Sloves_Starter", // Working directory of the launcher
+    "work_directory": "D:\\Projects\\Python\\Sloves_Starter", // Working Directory of the object program
+    "use_venv": true, // Warning: functionality with this option turned off has not been tested for availability
     "venv_prompt": "venv",
-    "script_name": null,
-    "argument": null,
-    "restart": false,
-    "reselect": false,
-    "run_cmd_need_to_ask": true,
-    "run_cmd_ask_default_values": {},
+    "script_name": null, // Automatic Search
+    "argument": null, // Pass through using starter parameters
+    "restart": false, // Automatic restart after program exit
+    "reselect": false, // Automatic restart requires the user to reselect the script to execute
+    "run_cmd_need_to_ask": true, // Asked when running an external command
+    "ask_default_values": {}, // ASK options that are automatically populated at run time (ID reference [AskID](#AskID)) 
     "divider_line_char": "=",
-    "inject_environment_variables": {},
-    "text_encoding": "utf-8",
-    "print_return_code": true,
-    "print_runtime": true,
-    "automatic_exit": false,
-    "allow_print": true
+    "inject_environment_variables": {}, // Inject sub-process environment variables
+    "text_encoding": "utf-8", // Text File Encoding
+    "print_return_code": true, // Whether to print the child process return value
+    "print_runtime": true, // Whether to print the child process run time
+    "automatic_exit": false, // Exit directly after execution, instead of pausing
+    "allow_print": true // Error messages are not affected after closing
 }
 ```
 When it can't find one, it tries to create one.
+
+## AskID
+
+- Create requirements file
+- Run Cmd
+- Create New Configuration File
 
 ## Exit Codes
 
@@ -101,18 +108,7 @@ When it can't find one, it tries to create one.
 | 255 | UNKNOWN_ERROR |
 
 When the child process runs, the return value of the child process is returned.
-When the program returns an `UNKNOWN_ERROR`, it writes the traceback to the `Traceback.txt` file
-
-## Why 48KB?
-
-Because it includes:
-- Virtual environment manager
-- Interactive CLI interface  
-- Package dependency resolver
-- Cross-platform compatibility layer
-- Configuration system
-- Performance metrics
-- Error handling framework
+When the program returns an `UNKNOWN_ERROR`, it writes the traceback to the `Traceback.txt` file.
 
 ---
 
