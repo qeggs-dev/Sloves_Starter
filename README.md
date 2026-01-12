@@ -52,16 +52,8 @@ python Sloves_Starter.py
         "jvm": "pip3",
         "default": "pip3"
     },
-    "requirements": [
-        {
-            "name": "requests"
-        },
-        {
-            "name": "numpy",
-            "version": "1.19.5"
-        }
-    ],
-    "requirements_file": "requirements.txt",
+    "requirements": [], // Contents to write into requirements.txt
+    "requirements_file": "requirements.txt", // Name of the requirements file
     "cwd": "D:\\Projects\\Python\\Sloves_Starter", // Working directory of the launcher
     "work_directory": "D:\\Projects\\Python\\Sloves_Starter", // Working Directory of the object program
     "use_venv": true, // Warning: functionality with this option turned off has not been tested for availability
@@ -93,6 +85,7 @@ When it can't find one, it tries to create one.
 
 | Code | Description |
 | --- | --- |
+| -1 | ONLY_PAUSE |
 | 0 | SUCCESS |
 | 1 | CONFIG_NOT_FOUND |
 | 2 | CONFIG_DECODE_ERROR |
@@ -105,6 +98,7 @@ When it can't find one, it tries to create one.
 | 9 | SCRIPT_NAME_IS_EMPTY |
 | 10 | SCRIPT_NAME_NOT_PROVIDED |
 | 11 | USER_TERMINATED |
+| 12 | CONFIG_PARSING_ERROR |
 | 255 | UNKNOWN_ERROR |
 
 When the child process runs, the return value of the child process is returned.
