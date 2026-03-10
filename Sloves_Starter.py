@@ -3,7 +3,7 @@ from __future__ import annotations
 # Python Simple Launcher For Virtual Environment Scripts
 # Sloves Starter !!!
 
-__version__ = "0.4.5"
+__version__ = "0.5.0"
 
 # region Imports
 import re
