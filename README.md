@@ -59,7 +59,8 @@ python Sloves_Starter.py
     "use_venv": true, // Warning: functionality with this option turned off has not been tested for availability
     "venv_prompt": "venv",
     "script_name": null, // Automatic Search
-    "argument": null, // Pass through using starter parameters
+    "arguments": null, // Pass through using starter parameters
+    "python_arguments": null, // Pass through using python parameters
     "restart": false, // Automatic restart after program exit
     "reselect": false, // Automatic restart requires the user to reselect the script to execute
     "run_cmd_need_to_ask": true, // Asked when running an external command
