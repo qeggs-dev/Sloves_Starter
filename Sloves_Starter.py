@@ -867,23 +867,23 @@ class SlovesStarter:
                 while True:
                     time.sleep(60)
             except KeyboardInterrupt:
-                self._exit(code)
+                self.exit(code)
         else:
-            self._exit(code)
+            self.exit(code)
     # endregion
 
     # region > exit
-    def _exit(self, code: ExitCode | int | None = None) -> None:
+    def exit(self, code: ExitCode | int | None = None) -> None:
         if isinstance(code, ExitCode):
             if code == ExitCode.ONLY_PAUSE:
                 return
             if self.allow_print:
                 print(f"Exit with code {code.value}({code.name}).")
-            exit(code.value)
+            sys.exit(code.value)
         elif isinstance(code, int):
             if self.allow_print:
                 print(f"Exit with code {code}.")
-            exit(code)
+            sys.exit(code)
         else:
             return
     # endregion
@@ -1196,7 +1196,7 @@ class SlovesStarter:
                 break
         
         if self.automatic_exit:
-            self._exit(return_code)
+            self.exit(return_code)
         else:
             self.pause_program(return_code)
     # endregion
