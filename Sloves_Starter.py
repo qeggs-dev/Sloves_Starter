@@ -245,7 +245,7 @@ def absolute_path(path: Union[str, Path], cwd: Optional[Union[str, Path]] = None
         cwd = Path(cwd)
     if path.is_absolute():
         return path
-    return cwd.absolute() / path
+    return cwd.resolve() / path
 # endregion
 
 # region  Ask
@@ -417,9 +417,9 @@ class FindFile(BaseAsk, Generic[T_FILE]):
             else:
                 generator = path.glob(self._glob)
             for path in generator:
-                if str(path.absolute()) in path_set:
+                if str(path.resolve()) in path_set:
                     continue
-                path_set.add(str(path.absolute()))
+                path_set.add(str(path.resolve()))
                 yield path
     
     def ask(self) -> Union[Path, None]:
