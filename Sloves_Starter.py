@@ -17,7 +17,7 @@ import atexit
 import platform
 import traceback
 import subprocess
-from enum import IntEnum, StrEnum
+from enum import Enum
 from pathlib import Path
 from abc import ABC, abstractmethod
 from typing import (
@@ -37,7 +37,7 @@ SYSTEM: str = platform.system()
 
 T_CPV = TypeVar("T_CPV")
 
-class ExitCode(IntEnum):
+class ExitCode(Enum):
     ONLY_PAUSE = -1
     SUCCESS = 0
     CONFIG_NOT_FOUND = 1
