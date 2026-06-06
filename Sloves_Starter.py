@@ -21,6 +21,8 @@ from enum import Enum
 from pathlib import Path
 from abc import ABC, abstractmethod
 from typing import (
+    Union,
+    Optional,
     Any,
     TextIO,
     TypeVar,
@@ -68,7 +70,10 @@ def set_title(title: str):
             # Win API
             ctypes.windll.kernel32.SetConsoleTitleW(title)
         except Exception:
-            os.system(f"title \"{title}\"")
+            subprocess.run(
+                "title", title,
+                shell = True,
+            )
     else:
         sys.stdout.write(f"\033]2;{title}\007")
         sys.stdout.flush()
@@ -232,7 +237,7 @@ class CrossPlatformValue(Generic[T_CPV]):
 # endregion
 
 # region absolute_path
-def absolute_path(path: str | Path, cwd: str | Path = None) -> Path:
+def absolute_path(path: Union[str, Path], cwd: Optional[Union[str, Path]] = None) -> Path:
     path = Path(path)
     if cwd is None:
         cwd = Path.cwd()
@@ -378,15 +383,15 @@ class Choose(BaseAsk, Generic[T, T_FILE]):
 class FindFile(BaseAsk, Generic[T_FILE]):
     def __init__(
             self,
-            base_path: str | Path | Iterable[str | Path],
+            base_path: Union[Union[str, Path], Iterable[Union[str, Path]]],
             glob: str = "*",
-            excludes: set[str | Path] = set(),
+            excludes: set[Union[str, Path]] = set(),
             recursive_search: bool = False,
             skip_only_one: bool = False,
             file: T_FILE = sys.stdout
         ):
         self._base_path: set[Path] = set()
-        if isinstance(base_path, str | Path):
+        if isinstance(base_path, str) or isinstance(base_path, Path):
             self._base_path.add(Path(base_path))
         else:
             for base_path in base_path:
@@ -417,7 +422,7 @@ class FindFile(BaseAsk, Generic[T_FILE]):
                 path_set.add(str(path.absolute()))
                 yield path
     
-    def ask(self) -> Path | None:
+    def ask(self) -> Union[Path, None]:
         """Ask the user to choose a file from the list of files"""
         file_set: set[Path] = set(self._file_list)
         
@@ -553,9 +558,9 @@ class SlovesStarter:
             default = "pip3"
         )
         self.venv_prompt: str = "venv"
-        self.script_name: str | list[str] | None = None
+        self.script_name: Optional[Union[str, list[str]]] = None
         self.python_arguments: list[str] = []
-        self.arguments: list[str] | None = None
+        self.arguments: Optional[list[str]] = None
         self.title: str = "Sloves Python Script Starter"
         self.console_title: str = self.title
         self.process_title: str = "Python Script"
@@ -677,13 +682,13 @@ class SlovesStarter:
         """
         if not isinstance(config, dict):
             raise TypeError("Config must be a dict")
-        def exists_and_is_designated_type(key: str, types: type | tuple[type, ...]) -> bool:
+        def exists_and_is_designated_type(key: str, types: Union[type, tuple[type, ...]]) -> bool:
             return key in config and isinstance(config[key], types)
         
-        def check_all_list_types(data: list[Any], types: type | tuple[type, ...]):
+        def check_all_list_types(data: list[Any], types: Union[type, tuple[type, ...]]):
             return all(isinstance(item, types) for item in data)
         
-        def check_all_dict_types(data: dict[Any, Any], key_types: type | tuple[type, ...], value_types: type | tuple[type, ...]):
+        def check_all_dict_types(data: dict[Any, Any], key_types: Union[type, tuple[type, ...]], value_types: Union[type, tuple[type, ...]]):
             return all(isinstance(key, key_types) and isinstance(value, value_types) for key, value in data.items())
         
         if exists_and_is_designated_type("title", str):
@@ -738,7 +743,7 @@ class SlovesStarter:
         if exists_and_is_designated_type("venv_prompt", str):
             self.venv_prompt = config["venv_prompt"]
         
-        if exists_and_is_designated_type("script_name", str | list):
+        if exists_and_is_designated_type("script_name", (str, list)) :
             data = config["script_name"]
             if isinstance(data, str):
                 self.script_name = data
@@ -750,9 +755,9 @@ class SlovesStarter:
             if check_all_list_types(config["arguments"], str):
                 self.arguments = config["arguments"]
         
-        if exists_and_is_designated_type("python_argument", list):
-            if check_all_list_types(config["python_argument"], str):
-                self.python_arguments = config["python_argument"]
+        if exists_and_is_designated_type("python_arguments", list):
+            if check_all_list_types(config["python_arguments"], str):
+                self.python_arguments = config["python_arguments"]
         
         if exists_and_is_designated_type("use_venv", bool):
             self.use_venv = config["use_venv"]
@@ -802,7 +807,7 @@ class SlovesStarter:
     # endregion
     
     # region > create configuration
-    def create_configuration(self, output: str | Path | None = None):
+    def create_configuration(self, output: Optional[Union[str, Path]] = None):
         """
         Creates a configuration file from the current configuration.
 
@@ -818,7 +823,7 @@ class SlovesStarter:
             "python_name": self.python_name.dump(),
             "pip_name": self.pip_name.dump(),
             "requirements": self.requirements,
-            "requirements_file": self.requirements_file.value,
+            "requirements_file": self.requirements_file.dump(),
             "cwd": str(self.cwd),
             "work_directory": str(self.work_directory),
             "use_venv": self.use_venv,
@@ -846,7 +851,7 @@ class SlovesStarter:
     # endregion
 
     # region > pause program
-    def pause_program(self, code: ExitCode | int = ExitCode.SUCCESS, prompt: str | None = None, wait: bool = True):
+    def pause_program(self, code: Union[ExitCode, int] = ExitCode.SUCCESS, prompt: Optional[str] = None, wait: bool = True):
         """
         Pause the program and wait for user input to continue.
 
@@ -873,7 +878,7 @@ class SlovesStarter:
     # endregion
 
     # region > exit
-    def exit(self, code: ExitCode | int | None = None) -> None:
+    def exit(self, code: Optional[Union[ExitCode, int]] = None) -> None:
         if isinstance(code, ExitCode):
             if code == ExitCode.ONLY_PAUSE:
                 return
@@ -893,15 +898,15 @@ class SlovesStarter:
             self,
             cmd: list[str],
             reason: str,
-            cwd: Path | None = None,
+            cwd: Optional[Path] = None,
             default: bool = True,
             print_return_code: bool = True,
             print_runtime: bool = True,
             runtime_handler: Callable[[int, int], str] = lambda start, end: format_carry_duration(end - start, use_abbreviation=True, levels=TIME_LEVELS, final_level=("millennium", "mill")),
-            env: dict[str, str] | None = None,
+            env: Optional[dict[str, str]] = None,
             askfile: TextIO = sys.stdout,
             capture_output: bool = False,
-            ) -> subprocess.CompletedProcess[bytes] | None:
+            ) -> Union[subprocess.CompletedProcess[bytes], None]:
         """
         Run a command with an interactive prompt to ask the user if they want to continue.
 
@@ -1085,7 +1090,7 @@ class SlovesStarter:
                 file = askfile,
             )
             script_name = absolute_path(choose.ask(), self.work_directory)
-        elif isinstance(self.script_name, str | Path):
+        elif isinstance(self.script_name, str) or isinstance(self.script_name, Path):
             if absolute_path(self.script_name, self.work_directory).exists():
                 script_name = absolute_path(self.script_name, self.work_directory)
             else:
@@ -1126,7 +1131,7 @@ class SlovesStarter:
     # endregion
 
     # region > print_divider_line
-    def print_divider_line(self, char: str | None = None):
+    def print_divider_line(self, char: Optional[str] = None):
         """
         Print divider line
 
@@ -1219,5 +1224,5 @@ if __name__ == "__main__":
         with open("Traceback.txt", "w", encoding=text_encoding) as f:
             f.write(traceback.format_exc())
         traceback.print_exc()
-        SlovesStarter.pause_program(ExitCode.UNKNOWN_ERROR)
+        sys.exit(ExitCode.UNKNOWN_ERROR.value)
 # endregion
