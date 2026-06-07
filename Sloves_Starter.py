@@ -21,6 +21,9 @@ from enum import Enum
 from pathlib import Path
 from abc import ABC, abstractmethod
 from typing import (
+    List,
+    Dict,
+    Tuple,
     Union,
     Optional,
     Any,
@@ -202,7 +205,7 @@ class CrossPlatformValue(Generic[T_CPV]):
             return self._jvm_value is not None
         return False
     
-    def dump(self) -> dict[str, T_CPV | None]:
+    def dump(self) -> Dict[str, T_CPV | None]:
         """Dump the values to a dictionary."""
         return {
             "windows": self.windows,
@@ -447,7 +450,7 @@ class FindFile(BaseAsk, Generic[T_FILE]):
 # endregion
 
 # region FormatTimeLevels
-TIME_LEVELS: list[tuple[str, str, int]] = [
+TIME_LEVELS: List[Tuple[str, str, int]] = [
     ("nanosecond", "ns", 1000),
     ("microsecond", "μs", 1000),
     ("millisecond", "ms", 1000),
@@ -465,11 +468,11 @@ TIME_LEVELS: list[tuple[str, str, int]] = [
 # region FormatCarryDuration
 def format_carry_duration(
     value: int,
-    levels: list[tuple[str, str, int]],
+    levels: List[Tuple[str, str, int]],
     start_with: int = 0,
     use_abbreviation: bool = False,
     delimiter: str = ", ",
-    final_level: tuple[str, str] = ("max_level", "max"),
+    final_level: Tuple[str, str] = ("max_level", "max"),
     negative_prompt: str = "(Negative) "
 ) -> str:
     """
@@ -477,11 +480,11 @@ def format_carry_duration(
 
     Args:
         value (int): The value to format.
-        levels (list[tuple[str, str, int]]): List of (name, abbreviation, divisor) tuples.
+        levels (List[Tuple[str, str, int]]): List of (name, abbreviation, divisor) tuples.
         start_with (int, optional): The starting index in levels. Defaults to 0.
         use_abbreviation (bool, optional): Whether to use abbreviations. Defaults to False.
         delimiter (str, optional): Delimiter between units. Defaults to ", ".
-        final_level (tuple[str, str], optional): Final level (name, abbreviation). Defaults to ("max_level", "max").
+        final_level (Tuple[str, str], optional): Final level (name, abbreviation). Defaults to ("max_level", "max").
 
     Returns:
         str: Formatted value string.
@@ -502,7 +505,7 @@ def format_carry_duration(
     value = abs(value)
     
     end_level, end_level_abbreviation = final_level
-    data_level_stack: list[str] = []
+    data_level_stack: List[str] = []
     remaining_part: int = value
     
     # Process each level starting from the specified level
@@ -541,8 +544,8 @@ def format_carry_duration(
 
 # region MainClass
 class SlovesStarter:
-    YES_CHARSET: list[str] = ["y", "yes", "true", "t", "1"]
-    NO_CHARSET: list[str] = ["n", "no", "false", "f", "0"]
+    YES_CHARSET: List[str] = ["y", "yes", "true", "t", "1"]
+    NO_CHARSET: List[str] = ["n", "no", "false", "f", "0"]
     PIP_FREEZE_REGEX: re.Pattern[str] = re.compile(r"^(?P<name>[\w\d\.\-]+)(==(?P<version>[\w\d\.]+))?$")
 
     # region > init
@@ -558,16 +561,16 @@ class SlovesStarter:
             default = "pip3"
         )
         self.venv_prompt: str = "venv"
-        self.script_name: Optional[Union[str, list[str]]] = None
-        self.python_arguments: list[str] = []
-        self.arguments: Optional[list[str]] = None
+        self.script_name: Optional[Union[str, List[str]]] = None
+        self.python_arguments: List[str] = []
+        self.arguments: Optional[List[str]] = None
         self.title: str = "Sloves Python Script Starter"
         self.console_title: str = self.title
         self.process_title: str = "Python Script"
         self.process_exit_title: str = self.title
         self.exit_title: str = self.title
         self.use_venv: bool = True
-        self.requirements: list[str] = []
+        self.requirements: List[str] = []
         self.requirements_file: CrossPlatformValue[str] = CrossPlatformValue(
             default="requirements.txt"
         )
@@ -575,9 +578,9 @@ class SlovesStarter:
         self.restart:bool = False
         self.reselect: bool = False
         self.run_cmd_need_to_ask: bool = True
-        self.ask_default_values: dict[str, bool] = {}
+        self.ask_default_values: Dict[str, bool] = {}
         self.divider_line_char: str = "="
-        self.inject_environment_variables: dict[str, str] = os.environ.copy()
+        self.inject_environment_variables: Dict[str, str] = os.environ.copy()
         self.text_encoding:str = "utf-8"
         self.print_return_code: bool = True
         self.print_runtime: bool = True
@@ -682,13 +685,13 @@ class SlovesStarter:
         """
         if not isinstance(config, dict):
             raise TypeError("Config must be a dict")
-        def exists_and_is_designated_type(key: str, types: Union[type, tuple[type, ...]]) -> bool:
+        def exists_and_is_designated_type(key: str, types: Union[type, Tuple[type, ...]]) -> bool:
             return key in config and isinstance(config[key], types)
         
-        def check_all_list_types(data: list[Any], types: Union[type, tuple[type, ...]]):
+        def check_all_list_types(data: List[Any], types: Union[type, Tuple[type, ...]]):
             return all(isinstance(item, types) for item in data)
         
-        def check_all_dict_types(data: dict[Any, Any], key_types: Union[type, tuple[type, ...]], value_types: Union[type, tuple[type, ...]]):
+        def check_all_dict_types(data: Dict[Any, Any], key_types: Union[type, Tuple[type, ...]], value_types: Union[type, Tuple[type, ...]]):
             return all(isinstance(key, key_types) and isinstance(value, value_types) for key, value in data.items())
         
         if exists_and_is_designated_type("title", str):
@@ -896,14 +899,14 @@ class SlovesStarter:
     # region > run cmd
     def run_cmd(
             self,
-            cmd: list[str],
+            cmd: List[str],
             reason: str,
             cwd: Optional[Path] = None,
             default: bool = True,
             print_return_code: bool = True,
             print_runtime: bool = True,
             runtime_handler: Callable[[int, int], str] = lambda start, end: format_carry_duration(end - start, use_abbreviation=True, levels=TIME_LEVELS, final_level=("millennium", "mill")),
-            env: Optional[dict[str, str]] = None,
+            env: Optional[Dict[str, str]] = None,
             askfile: TextIO = sys.stdout,
             capture_output: bool = False,
             ) -> Union[subprocess.CompletedProcess[bytes], None]:
@@ -1065,7 +1068,7 @@ class SlovesStarter:
         script_name = self.script_name
         
         if self.script_name is None:
-            suspected_script_file:list[Path] = []
+            suspected_script_file:List[Path] = []
             self_path = Path(sys.argv[0])
             for file in self.work_directory.glob("*.py"):
                 if file != self_path:
