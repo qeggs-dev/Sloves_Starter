@@ -14,6 +14,10 @@ The goal is to not take up space in the project and to ensure that all Python pa
 python Sloves_Starter.py
 ```
 
+## Python Version
+
+Python 3.9+ is required to run this script.
+
 ## Features
 
 - ✅ **Auto Virtual Environment** - Creates/activates venv automatically
